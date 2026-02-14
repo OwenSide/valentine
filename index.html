@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Special for You ✨</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #fff0f5; 
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --accent-pink: #ff8fab;
+            --orbit-color: #a29bfe;
+            --text-color: #555;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0; padding: 0; background-color: var(--bg-color);
+            font-family: 'Nunito', sans-serif; min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden; position: relative;
+        }
+
+        .falling-item {
+            position: absolute; top: -50px; pointer-events: none; z-index: 0;
+            animation: fall linear infinite; display: flex; justify-content: center; align-items: center;
+        }
+        .falling-item img { width: 55px; height: auto; }
+        @keyframes fall {
+            0% { transform: translateY(-50px) rotate(0deg); opacity: 0.9; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        .sender-text {
+            background: white; padding: 10px 20px; border-radius: 20px;
+            margin-top: -15px; margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(162, 155, 254, 0.15);
+            border: 1px solid #fff0f5; display: flex; flex-direction: column; align-items: center;
+        }
+        .korean-phrase { font-family: 'Gowun Dodum', sans-serif; font-size: 15px; color: #ff8fab; font-weight: 700; }
+        .translation { font-size: 11px; color: #bbb; font-weight: 400; margin-top: 2px; letter-spacing: 0.5px; }
+
+        .runners-zone {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 120px;
+            pointer-events: none; z-index: 20; overflow: hidden;
+        }
+        .runner { position: absolute; bottom: 10px; height: auto; }
+        .run-right { width: 80px; left: -100px; animation: runRight 12s linear infinite; }
+        .run-left { width: 100px; right: -120px; animation: runLeft 18s linear infinite; }
+        @keyframes runRight { 0% { left: -20%; } 100% { left: 120%; } }
+        @keyframes runLeft { 0% { right: -20%; } 100% { right: 120%; } }
+
+        .card {
+            background: var(--card-bg); border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(162, 155, 254, 0.25);
+            width: 88%; max-width: 360px; min-height: 500px;
+            padding: 30px 20px; position: relative; z-index: 50;
+            border: 2px solid #fff; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            transition: all 0.5s ease;
+        }
+
+        .intro-screen, .envelope-screen, .content-screen {
+            width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        .envelope-screen { display: none; opacity: 0; transition: opacity 0.5s ease; position: relative; }
+
+        .notification-icon { font-size: 50px; margin-bottom: 15px; animation: float 3s ease-in-out infinite; }
+        .intro-text { font-size: 18px; color: #888; margin-bottom: 20px; font-weight: 700; }
+        .korean-gif { width: 150px; border-radius: 15px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+        .play-btn {
+            background: linear-gradient(90deg, #ff8fab, #a29bfe, #ff8fab);
+            background-size: 200% auto; color: white; border: none; padding: 18px 50px;
+            border-radius: 50px; font-size: 18px; cursor: pointer;
+            box-shadow: 0 10px 25px rgba(255, 143, 171, 0.6);
+            font-family: 'Gowun Dodum', sans-serif; font-weight: bold;
+            transition: all 0.4s ease; animation: shine 3s linear infinite;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+
+        .envelope {
+            font-size: 100px; cursor: pointer; transition: transform 0.1s;
+            user-select: none; -webkit-tap-highlight-color: transparent;
+            z-index: 10; margin-bottom: 20px;
+            /* Конверт виден сразу, но клик отключен в начале через JS */
+        }
+
+        .click-hint { font-size: 16px; color: #888; font-weight: bold; min-height: 24px; z-index: 10; transition: color 0.3s; }
+        .progress-bar {
+            width: 180px; height: 12px; background: #f0f0f0; border-radius: 10px; margin-top: 20px; overflow: hidden; z-index: 10; border: 1px solid white;
+        }
+        .progress-fill {
+            height: 100%; width: 0%; background: linear-gradient(90deg, #ff8fab, #a29bfe);
+            transition: width 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* ГИФКИ */
+        .gif-korean-happy { position: absolute; bottom: 241px; right: -1px; width: 99px; z-index: 5; }
+        .gif-cat { position: absolute; top: 0px; left: -10px; width: 80px; transform: rotate(-15deg); z-index: 5; }
+        .helper-cat { position: absolute; width: 110px; z-index: 5; transition: all 0.5s ease; }
+        #cat-idle { bottom: -150px; right: -20px; transform: rotate(-10deg); opacity: 1; }
+        #cat-active { bottom: -50px; right: -30px; opacity: 0; transform: rotate(-10deg); }
+        #cat-active.show { bottom: 13px; right: -12px; opacity: 1; }
+
+        /* КНОПКИ ВЫБОРА */
+        .choice-container { display: flex; gap: 15px; margin-top: 10px; z-index: 100; }
+        .choice-btn {
+            padding: 12px 25px; border-radius: 25px; border: none;
+            font-weight: bold; cursor: pointer; font-family: 'Nunito', sans-serif;
+            transition: transform 0.2s ease;
+        }
+        .open-btn { background: var(--accent-pink); color: white; }
+        .no-btn { background: #f0f0f0; color: #888; position: relative; }
+
+        /* Анимации */
+        /* Анимации конверта */
+        .shake-soft { animation: shake 0.3s; }
+        .shake-hard { animation: shake-hard 0.3s infinite; }
+        @keyframes shake { 0% { transform: rotate(0deg) scale(1); } 25% { transform: rotate(5deg) scale(1.1); } 75% { transform: rotate(-5deg) scale(1.1); } 100% { transform: rotate(0deg) scale(1); } }
+        @keyframes shake-hard { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-1px, 2px) rotate(-1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 70% { transform: translate(3px, 1px) rotate(-1deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 90% { transform: translate(1px, 2px) rotate(0deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
+        @keyframes heartbeat { 0% { transform: scale(1); } 100% { transform: scale(1); } }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        
+        .content-screen { display: none; opacity: 0; }
+
+        /* ЭКРАН 3: ФИНАЛ */
+        .content-screen { display: none; flex-direction: column; align-items: center; width: 100%; opacity: 0; transition: opacity 1s ease; }
+        .heart-icon {
+            font-size: 70px; margin-bottom: 15px; display: block;
+            animation: heartbeat 1.5s infinite; line-height: 1;
+            background: linear-gradient(to bottom right, #ff8fab, #ffc2d1);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; color: #ff8fab; 
+        }
+        h1 { font-family: 'Gowun Dodum', serif; color: var(--orbit-color); font-size: 26px; margin: 0 0 5px 0; line-height: 1.2; }
+        .sub-header { font-size: 12px; color: #bbb; letter-spacing: 3px; margin-bottom: 25px; text-transform: uppercase; font-weight: bold; }
+        .message-box { font-size: 14px; color: #666; line-height: 1.6; width: 100%; min-height: 140px; white-space: pre-wrap; }
+        @keyframes heartbeat { 0% { transform: scale(1); } 15% { transform: scale(1.15); } 30% { transform: scale(1); } 45% { transform: scale(1.15); } 100% { transform: scale(1); } }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" loop preload="auto">
+        <source src="ost.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="card">
+        <div class="intro-screen" id="intro">
+            <div class="notification-icon">💌</div>
+            <div class="intro-text">Входящее сообщение...</div>
+            <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExc3JlbDBjaTRxNzAzN2hnZ2U1NGZ1NnFnMjBhZTN6djV2OXNranNoZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/AZnJ1UJtGulIm2aBLW/giphy.gif" class="korean-gif">
+            <button class="play-btn" onclick="goToEnvelope()">Получить письмо</button>
+        </div>
+
+        <div class="envelope-screen" id="envelope-screen">
+            <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExY3h0M3dyZDVkejFvbml3ODNsZHNlb3FzNjE0dnJuN2xidzg2dnh2NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/WZgTHljUIuzkRcGSUu/giphy.gif" class="gif-korean-happy">
+            <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTNod3Jtbjg3MnJxNmhzcHN6dHlpZHh6cWk0NG4zamk2ajFqcmo1YyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/GH0vPYrev5AcfMYn7C/giphy.gif" class="gif-cat">
+            <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmlrb2R4dm1vZDJ5MXN0Mmo1ZmVwNDZ6NXptNGg5NWhhOTQ0a2VubCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/EdWv4MjHi6nGh45jPg/giphy.gif" class="helper-cat" id="cat-idle">
+            <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTg2d3FzamEzZ3hxYXQ3OTgyemkyOWoyZ2R2OGE3aWZudXY4OWc0dSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/nCrj4LIYE9idVKp7KX/giphy.gif" class="helper-cat" id="cat-active">
+
+            <div class="envelope" id="envelope-icon" style="pointer-events: none;">✉️</div>
+
+            <div class="choice-container" id="choice-container">
+                <button class="choice-btn open-btn" onclick="confirmOpen()">Открыть</button>
+                <button class="choice-btn no-btn" id="run-btn" onmouseover="runAway()" onclick="runAway()">Не-а</button>
+            </div>
+
+            <div class="click-hint" id="click-text" style="display: none;">Постучись в конверт!</div>
+            <div class="progress-bar" id="p-bar" style="display: none;">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+
+        <div class="screen content-screen" id="content">
+            <span class="heart-icon">❤️</span> 
+            <h1>Двойной Путь</h1>
+            <h1 style="font-size: 22px;">해피 발렌타인 데이!</h1>
+            <div class="sub-header">С Днем святого Валентина!</div>
+
+            <div class="message-box" id="typewriter"></div>
+        </div>
+    </div>
+
+    <script>
+        // Падающие элементы
+        function createFallingItem() {
+            const item = document.createElement('div');
+            item.classList.add('falling-item');
+            const itemType = Math.floor(Math.random() * 4);
+            if (itemType === 0) item.innerText = '✨';
+            else if (itemType === 1) item.innerText = '🌸';
+            else if (itemType === 2) item.innerHTML = '<img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGlveDFkMGQ4N3piYzBxYjIwYmVocnpyanZtODJtamU5ZGhvZDRiciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/HJFXLDfHf5SruQUJ65/giphy.gif">';
+            else item.innerHTML = '<img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExYTdwc3JyNTA0cmFtMG55MGVrNml3ZXNlbHUzZGtuNnRneDR0MGZueCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/jmxDdzVQbvDa2U0WU4/giphy.gif">';
+            item.style.left = Math.random() * 100 + 'vw';
+            item.style.fontSize = (Math.random() * 15 + 15) + 'px';
+            const duration = Math.random() * 5 + 6; 
+            item.style.animationDuration = duration + 's';
+            document.body.appendChild(item);
+            setTimeout(() => item.remove(), duration * 1000);
+        }
+        setInterval(createFallingItem, 300);
+
+        function goToEnvelope() {
+            document.getElementById('intro').style.display = 'none';
+            const envScreen = document.getElementById('envelope-screen');
+            const audio = document.getElementById('bg-music');
+            envScreen.style.display = 'flex';
+            setTimeout(() => envScreen.style.opacity = 1, 50);
+            audio.volume = 0.3; 
+            audio.play().catch(e => console.log("Music error"));
+        }
+
+        // КНОПКА ОТКРЫТЬ
+        function confirmOpen() {
+            document.getElementById('choice-container').style.display = 'none';
+            document.getElementById('envelope-icon').style.pointerEvents = 'auto'; // Активируем конверт
+            document.getElementById('click-text').style.display = 'block';
+            document.getElementById('p-bar').style.display = 'block';
+            document.getElementById('envelope-icon').onclick = clickEnvelope;
+        }
+
+        // КНОПКА НЕ-А
+        function runAway() {
+            const btn = document.getElementById('run-btn');
+            const randomX = Math.floor(Math.random() * 140) - 70; 
+            const randomY = Math.floor(Math.random() * 80) - 40; 
+            btn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+            const phrases = ["Не-а", "Мимо", "Хех", "Закрыто", "Ни за что!"];
+            btn.innerText = phrases[Math.floor(Math.random() * phrases.length)];
+        }
+
+        let clicks = 0;
+        const requiredClicks = 15; 
+
+        function clickEnvelope() {
+            const envelope = document.getElementById('envelope-icon');
+            const progress = document.getElementById('progress-fill');
+            const hint = document.getElementById('click-text');
+            const catIdle = document.getElementById('cat-idle');
+            const catActive = document.getElementById('cat-active');
+
+            clicks++;
+            progress.style.width = (clicks / requiredClicks) * 100 + '%';
+
+            envelope.classList.remove('shake-soft');
+            void envelope.offsetWidth; 
+            envelope.classList.add('shake-soft');
+
+            // 1. Появление второго котика (после 3 кликов)
+            if (clicks === 3) {
+                // Скрываем спящего, показываем активного
+                catIdle.style.opacity = '0'; // Плавно исчезает
+                setTimeout(() => {
+                    catIdle.style.display = 'none';
+                    catActive.classList.add('show'); // Появляется снизу
+                }, 200);
+                
+                hint.innerText = "Ой, кто это?";
+            }
+
+            // 2. Середина (смена иконки)
+            if (clicks === 7) {
+                envelope.innerText = '📨'; 
+                hint.innerText = "Еще немного...";
+                hint.style.color = "#ff8fab";
+            }
+
+            // 3. Почти финал (тряска сильнее)
+            if (clicks === 12) {
+                envelope.classList.add('shake-hard');
+                hint.innerText = "Открываемся!!!";
+                envelope.innerText = '❤️';
+            }
+
+            // 4. Финал
+            if (clicks >= requiredClicks) {
+                envelope.classList.remove('shake-hard');
+                hint.innerText = "Готово!";
+                setTimeout(revealContent, 600);
+            }
+        }
+
+        function revealContent() {
+            const envScreen = document.getElementById('envelope-screen');
+            const content = document.getElementById('content');
+            envScreen.style.opacity = 0;
+            setTimeout(() => {
+                envScreen.style.display = 'none';
+                content.style.display = 'flex';
+                setTimeout(() => {
+                    content.style.opacity = 1;
+                    typeWriter();
+                }, 100);
+            }, 500);
+        }
+
+        const textToType = "В сюжете «Двойного пути» каждый герой прокладывает свой уникальный маршрут...\n\nГоворят, что случайных встреч не бывает. Наши пути пересеклись 3 месяца назад, и это стало самым приятным событием за последнее время.\n\n안야, 나는 너와의 대화를 소중히 여겨 ☁️\n(Аня, я дорожу нашим общением)\n\n행복한 발렌타인 데이!\n(Счастливого Дня святого Валентина!)\n\nПусть этот «эпизод» длится как можно дольше. 🏁✨";
+        let charIndex = 0;
+        function typeWriter() {
+            if (charIndex < textToType.length) {
+                document.getElementById("typewriter").textContent += textToType.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeWriter, 60);
+            }
+        }
+    </script>
+</body>
+</html>
