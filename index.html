@@ -119,6 +119,44 @@
         .open-btn { background: var(--accent-pink); color: white; }
         .no-btn { background: #f0f0f0; color: #888; position: relative; }
 
+        /* Общий контейнер для сердца и кота */
+        .icon-wrapper {
+            position: relative; /* Это "якорь" для гифки */
+            display: inline-block; /* Контейнер сжимается по размеру содержимого */
+            margin-bottom: 15px; /* Отступ до заголовка */
+        }
+
+        /* Гифка с котиком */
+        .gif-cat-happy {
+            position: absolute; /* Позиция относительно .icon-wrapper */
+            width: 59px;        /* Размер котика */
+            height: auto;
+            
+            /* НАСТРОЙКА ПОЛОЖЕНИЯ КОТА ОТНОСИТЕЛЬНО СЕРДЦА */
+            right: 88px;      /* Сдвигаем вправо от сердца (поменяй на left, если хочешь слева) */
+            bottom: 5px;       /* Выравниваем по низу */
+            transform: rotate(10deg); /* Легкий наклон для живости */
+            z-index: 10;
+        }
+
+        /* Гифка у левой стены */
+        .side-decoration {
+            position: fixed; /* Фиксируем на экране */
+            left: -16px;         /* Прижимаем к левому краю */
+            bottom: 0;       /* Прижимаем к низу (поставь top: 0, если хочешь к верху) */
+            width: 150px;    /* Размер гифки (поменяй, если нужно больше/меньше) */
+            height: auto;
+            z-index: 10;     /* Позади карточки (у карточки 50), но перед падающим фоном */
+            pointer-events: none; /* Чтобы она не мешала кликать, если перекроет что-то */
+        }
+
+        /* Если хочешь, чтобы на телефонах она не перекрывала текст, можно её уменьшить */
+        @media (max-width: 400px) {
+            .side-decoration {
+                width: 100px;
+            }
+        }
+
         /* Анимации */
         /* Анимации конверта */
         .shake-soft { animation: shake 0.3s; }
@@ -151,6 +189,8 @@
         <source src="ost.mp3" type="audio/mpeg">
     </audio>
 
+    <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTJ3Z25qYzMxbWZlY2oyMDhrbnVoY2hkYzd5ejUwejQ1emZ5M3IwbCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/VaqJoSUq0wzWMcgA2M/giphy.gif" class="side-decoration" alt="Cute Cat">
+
     <div class="card">
         <div class="intro-screen" id="intro">
             <div class="notification-icon">💌</div>
@@ -179,7 +219,10 @@
         </div>
 
         <div class="screen content-screen" id="content">
-            <span class="heart-icon">❤️</span> 
+            <div class="icon-wrapper">
+                <span class="heart-icon">❤️</span>
+                <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeW4xazhvbGNhOTl6NDNsaXhuemFsdTN5YjVpN3BueTdhMXp4cnhnYSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/9AxXiiWbF0FHh9owS7/giphy.gif" class="gif-cat-happy">
+            </div> 
             <h1 style="font-size: 22px;">해피 발렌타인 데이!</h1>
             <div class="sub-header">С Днем святого Валентина!</div>
 
@@ -311,5 +354,4 @@
         }
     </script>
 </body>
-
 </html>
